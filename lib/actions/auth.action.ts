@@ -66,7 +66,7 @@ export async function signIn(params: SignInParams){
 }
 
 export async function setSessionCookie(idToken: string){
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
 
     const sessionCookie = await auth.createSessionCookie(idToken, {
         expiresIn: ONE_WEEK * 1000,
@@ -93,7 +93,7 @@ export async function getCurrentUser(): Promise<User | null> {
         const decodedClaims = await auth.verifySessionCookie(sessionCookie, true);
 
         const userRecord = await db.
-             collection('users')
+        collection('users')
             .doc(decodedClaims.uid)
             .get();
 
@@ -115,4 +115,36 @@ export async function isAuthenticated(){
     const user = await getCurrentUser();
 
     return !!user;
+}
+
+export async function getInterviewsByUserId(userId: string = ""): Promise<Interview[] | null> {
+    const interviews = await db
+        .collection('interviews')
+        .where('userid', '==', userId)
+        .orderBy('createdAt', 'desc')
+        .get();
+
+    return interviews.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+    })) as Interview[];
+}
+
+export async function getLatestInterviews(params: GetLatestInterviewsParams): Promise<Interview[] | null> {
+
+    const{ userId = "", limit = 20} = params;
+
+
+    const interviews = await db
+        .collection('interviews')
+        .orderBy('createdAt', 'desc')
+        .where('finalized', '==', true)
+        .where('userid', '!=', userId)
+        .limit(limit)
+        .get();
+
+    return interviews.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+    })) as Interview[];
 }

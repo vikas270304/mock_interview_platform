@@ -1,18 +1,20 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import {Form} from "@/components/ui/form";
-import {toast} from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { toast } from "sonner";
 import FormField from "@/components/FormField";
-import {useRouter} from "next/navigation";
-import {auth} from "@/firebase/client";
+import { useRouter } from "next/navigation";
+
+import { auth } from "@/firebase/client";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import {signIn, signUp} from "@/lib/actions/auth.action";
+
+import { signIn, signUp } from "@/lib/actions/auth.action";
 
 
 const authFormSchema = (type: Formtype) => {
